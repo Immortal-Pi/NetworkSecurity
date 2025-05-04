@@ -56,4 +56,4 @@ if __name__=='__main__':
     netoworkobj=NetoworkDataExtract()
     records=netoworkobj.csv_to_json_convertor(file_path=FILE_PATH)
     no_of_records=netoworkobj.insert_data_mongodb(records,DATABASE, collection)
-    print(no_of_records)
+    logging.info(f'inserted {no_of_records} to mongo db')
