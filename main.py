@@ -6,9 +6,10 @@ import sys
 
 
 
-STAGE_NAME='DATA INGESTION STAGE'
+
 if __name__=='__main__':
     try:
+        STAGE_NAME='DATA INGESTION STAGE'
         logging.info(f'{STAGE_NAME} started')
         trainingpipelineconfig=TrainingPipelineConfig()
         dataingestionconfig=DataIngestionConfig(trainingpipelineconfig)
