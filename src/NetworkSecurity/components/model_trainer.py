@@ -9,7 +9,7 @@ from NetworkSecurity.utils.ml_utils.metric.classification_metric import get_clas
 from NetworkSecurity.utils.ml_utils.model.estimator import NetworkModel
 from NetworkSecurity.entity.artifact_entity import DataTransformationArtifact,ModelTrainerArtifact
 from NetworkSecurity.entity.config_entity import ModelTraninerConfig
-
+import mlflow
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -29,6 +29,22 @@ class ModelTrainer:
         except Exception as e:
             raise NetworkSecurityException(e,sys)
 
+    
+    def track_mlflow(self,best_model,classificationmetric):
+        with mlflow.start_run():
+            f1_score=classificationmetric.f1_score
+            precision_score=classificationmetric.precision_score
+            recall_score=classificationmetric.recall_score 
+
+            mlflow.log_metrics(
+                {'f1_score':f1_score,
+                    'precision':precision_score,
+                    'recall':recall_score
+                 }
+            )
+            mlflow.sklearn.log_model(best_model,'model')
+
+    
     def train_model(self,xtrain,ytrain,xtest,ytest):
         models={
             'Random Forest':RandomForestClassifier(verbose=1),
@@ -48,19 +64,22 @@ class ModelTrainer:
             'Random Forest':{
                 # 'max_features':['sqrt','log2'],
                 # 'criterion':['gini','entropy','log_loss'],
-                'n_estimators':[8,16,32,64,128,256]
+                # 'n_estimators':[8,16,32,64,128,256],
+                'n_estimators':[8,16,32,128,256]
             },
             'Gradient Boosting':{
                 # 'loss':['log_loss','exponential'],
                 'learning_rate':[.1,.01,.05,.001],
-                'subsample':[0.6,0.7,0.75,0.8,0.85,0.9],
+                'subsample':[0.6,0.7,0.75,0.85,0.9],
+                # 'subsample':[0.6,0.7,0.75,0.8,0.85,0.9],
                 # 'criterion':['squared_error','friedman_mse'],
                 # 'max_featues':['auto','sqrt','log2'],
                 'n_estimators':[8,16,32,64,128,256]
             },
             'Logistic Regression':{},
             'AdaBoost':{
-                'learning_rate':[.1,.01,0.5,0.001],
+                'learning_rate':[.1,.01,0.001],
+                # 'learning_rate':[.1,.01,0.5,0.001],
                 'n_estimators':[8,16,32,64,128,256]
             }
         }
@@ -75,11 +94,14 @@ class ModelTrainer:
         y_train_pred=best_model.predict(xtrain)
 
         classification_train_metric=get_classification_score(y_true=ytrain,y_pred=y_train_pred)
-        # function to track the mlflow 
-
+    
         y_test_pred=best_model.predict(xtest)
         classification_test_metric=get_classification_score(y_true=ytest,y_pred=y_test_pred)
         
+        # function to track the mlflow 
+        self.track_mlflow(best_model,classificationmetric=classification_train_metric)
+
+
         # load the pickle file 
         preprocessor=load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
 
