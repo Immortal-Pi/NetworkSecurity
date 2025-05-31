@@ -2,4 +2,12 @@ python-dotenv
 pandas
 numpy
 pymongo
+pymongo[srv]==3.6
 certifi
+scikit-learn
+dill
+pyyaml
+mlflow
+dagshub
+fastapi
+uvicorn

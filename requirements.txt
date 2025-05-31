@@ -9,4 +9,7 @@ dill
 pyyaml
 mlflow
 dagshub
+fastapi
+uvicorn
+
 -e .
