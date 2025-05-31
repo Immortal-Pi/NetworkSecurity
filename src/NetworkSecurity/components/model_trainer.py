@@ -19,6 +19,9 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     RandomForestClassifier,
 )
+import dagshub
+
+dagshub.init(repo_owner='Immortal-Pi', repo_name='NetworkSecurity', mlflow=True)
 
 class ModelTrainer:
     def __init__(self,model_trainer_config:ModelTraninerConfig,data_transformation_artifact:DataTransformationArtifact):
@@ -35,7 +38,7 @@ class ModelTrainer:
             f1_score=classificationmetric.f1_score
             precision_score=classificationmetric.precision_score
             recall_score=classificationmetric.recall_score 
-
+            mlflow.log_params()
             mlflow.log_metrics(
                 {'f1_score':f1_score,
                     'precision':precision_score,
@@ -58,22 +61,22 @@ class ModelTrainer:
         params={
             'Decision Tree':{
                 'criterion':['gini','entropy','log_loss'],
-                # 'splitter':['best','random'],
-                # 'max_features':['sqrt','log2'],
+                'splitter':['best','random'],
+                'max_features':['sqrt','log2'],
             },
             'Random Forest':{
-                # 'max_features':['sqrt','log2'],
-                # 'criterion':['gini','entropy','log_loss'],
+                'max_features':['sqrt','log2'],
+                'criterion':['gini','entropy','log_loss'],
                 # 'n_estimators':[8,16,32,64,128,256],
                 'n_estimators':[8,16,32,128,256]
             },
             'Gradient Boosting':{
-                # 'loss':['log_loss','exponential'],
+                'loss':['log_loss','exponential'],
                 'learning_rate':[.1,.01,.05,.001],
                 'subsample':[0.6,0.7,0.75,0.85,0.9],
                 # 'subsample':[0.6,0.7,0.75,0.8,0.85,0.9],
-                # 'criterion':['squared_error','friedman_mse'],
-                # 'max_featues':['auto','sqrt','log2'],
+                'criterion':['squared_error','friedman_mse'],
+                'max_features':['auto','sqrt','log2'],
                 'n_estimators':[8,16,32,64,128,256]
             },
             'Logistic Regression':{},
