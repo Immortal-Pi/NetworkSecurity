@@ -38,7 +38,7 @@ class ModelTrainer:
             f1_score=classificationmetric.f1_score
             precision_score=classificationmetric.precision_score
             recall_score=classificationmetric.recall_score 
-            mlflow.log_params()
+            # mlflow.log_params()
             mlflow.log_metrics(
                 {'f1_score':f1_score,
                     'precision':precision_score,

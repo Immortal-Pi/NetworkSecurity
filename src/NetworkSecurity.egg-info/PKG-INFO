@@ -10,8 +10,7 @@ Description-Content-Type: text/markdown
 Requires-Dist: python-dotenv
 Requires-Dist: pandas
 Requires-Dist: numpy
-Requires-Dist: pymongo
-Requires-Dist: pymongo[srv]==3.6
+Requires-Dist: pymongo[srv]<5,>=4.3
 Requires-Dist: certifi
 Requires-Dist: scikit-learn
 Requires-Dist: dill
